@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Practical - 10 Exercises Demo</title>
+    <style>
+        :root { --primary: #3498db; --dark: #2c3e50; --light: #ecf0f1; --success: #27ae60; --danger: #e74c3c; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; display: flex; height: 100vh; background: #f4f7f6; transition: 0.3s; }
+        
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--dark); color: white; padding: 20px; overflow-y: auto; }
+        .sidebar h2 { font-size: 1.1rem; border-bottom: 1px solid #455a64; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { padding: 12px 15px; cursor: pointer; border-radius: 5px; margin-bottom: 5px; transition: 0.2s; font-size: 0.9rem; }
+        .sidebar li:hover { background: #34495e; }
+        .sidebar li.active { background: var(--primary); }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        .exercise-section { display: none; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); max-width: 800px; margin: 0 auto; }
+        .exercise-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Shared Components */
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; transition: 0.2s; background: var(--primary); color: white; }
+        button:hover { opacity: 0.8; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .demo-area { border: 2px dashed #eee; padding: 20px; margin-top: 20px; border-radius: 8px; }
+
+        /* Specific Exercise Styles */
+        .dark-mode-preview { transition: 0.3s; padding: 20px; border-radius: 8px; text-align: center; }
+        .dark-active { background: #222 !important; color: #fff !important; }
+        .toast { position: fixed; top: 20px; right: 20px; background: var(--success); color: white; padding: 15px 25px; border-radius: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; animation: slideIn 0.3s; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index: 999; }
+        .todo-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; }
+        .todo-item.done span { text-decoration: line-through; color: #888; }
+        #slider-img { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>JS PRACTICAL 10</h2>
+        <ul id="menu">
+            <li class="active" onclick="showEx(1)">1. Dark Mode</li>
+            <li onclick="showEx(2)">2. Show/Hide Password</li>
+            <li onclick="showEx(3)">3. Character Counter</li>
+            <li onclick="showEx(4)">4. Simple Cart</li>
+            <li onclick="showEx(5)">5. Search Filter</li>
+            <li onclick="showEx(6)">6. Modal & Toast</li>
+            <li onclick="showEx(7)">7. Mini Quiz</li>
+            <li onclick="showEx(8)">8. Image Slider</li>
+            <li onclick="showEx(9)">9. To-Do List</li>
+            <li onclick="showEx(10)">10. Countdown Timer</li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div id="ex1" class="exercise-section active">
+            <h3>Bài 1: Dark Mode</h3>
+            <div id="box-1" class="dark-mode-preview" style="background: #f9f9f9;">
+                <p>Nhấn nút để thay đổi giao diện vùng này.</p>
+                <button id="btn-1">Toggle Dark Mode</button>
+            </div>
+        </div>
+
+        <div id="ex2" class="exercise-section">
+            <h3>Bài 2: Show/Hide Password</h3>
+            <div class="demo-area">
+                <input type="password" id="input-2" placeholder="Nhập mật khẩu...">
+                <button id="btn-2">Hiện mật khẩu</button>
+            </div>
+        </div>
+
+        <div id="ex3" class="exercise-section">
+            <h3>Bài 3: Character Counter</h3>
+            <div class="demo-area">
+                <textarea id="input-3" rows="4" placeholder="Nhập tiểu sử của bạn..."></textarea>
+                <p id="count-3" style="text-align: right; color: #666;">0 / 150 ký tự</p>
+            </div>
+        </div>
+
+        <div id="ex4" class="exercise-section">
+            <h3>Bài 4: Simple Cart</h3>
+            <div class="demo-area">
+                <p>Sản phẩm: <strong>Laptop Dell XPS</strong></p>
+                <p>Giá: 25.000.000 VNĐ</p>
+                Số lượng: <input type="number" id="input-4" value="1" min="1" style="width: 80px;">
+                <h4 style="color: var(--danger);">Tổng tiền: <span id="total-4">25,000,000</span> VNĐ</h4>
+            </div>
+        </div>
+
+        <div id="ex5" class="exercise-section">
+            <h3>Bài 5: Search Filter</h3>
+            <input type="text" id="input-5" placeholder="Tìm tên sinh viên...">
+            <ul id="list-5" style="list-style: none; padding: 0;">
+                <li>Nguyễn Văn An</li><li>Trần Thị Bình</li><li>Lê Hoàng Cường</li><li>Võ Minh Đăng</li><li>Phạm Diệu Hoa</li>
+            </ul>
+        </div>
+
+        <div id="ex6" class="exercise-section">
+            <h3>Bài 6: Modal & Toast</h3>
+            <button id="btn-6-modal" style="background: var(--danger);">Xóa bài viết (Modal)</button>
+            <button id="btn-6-toast" style="background: var(--success);">Gửi tin nhắn (Toast)</button>
+            
+            <div id="modal-6" class="modal-overlay">
+                <div style="background:white; padding:30px; border-radius:8px; text-align:center;">
+                    <h4>Bạn chắc chắn chứ?</h4>
+                    <button onclick="closeModal()">Hủy</button>
+                    <button style="background:var(--danger)" onclick="confirmDelete()">Đồng ý</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="ex7" class="exercise-section">
+            <h3>Bài 7: Mini Quiz</h3>
+            <div class="demo-area">
+                <p><strong>JavaScript là ngôn ngữ gì?</strong></p>
+                <label><input type="radio" name="q1" value="wrong"> A. Ngôn ngữ đánh dấu</label><br>
+                <label><input type="radio" name="q1" value="correct"> B. Ngôn ngữ lập trình kịch bản</label><br>
+                <button id="btn-7" style="margin-top:15px;">Kiểm tra</button>
+            </div>
+        </div>
+
+        <div id="ex8" class="exercise-section">
+            <h3>Bài 8: Image Slider</h3>
+            <div class="demo-area" style="text-align:center;">
+                <img id="slider-img" src="https://picsum.photos/id/10/800/300" alt="slider">
+                <div style="margin-top:10px;">
+                    <button id="btn-8-prev">Trước</button>
+                    <button id="btn-8-next">Sau</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="ex9" class="exercise-section">
+            <h3>Bài 9: To-Do List</h3>
+            <div class="demo-area">
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="input-9" placeholder="Việc cần làm...">
+                    <button id="btn-9-add">Thêm</button>
+                </div>
+                <div id="list-9" style="margin-top:20px;"></div>
+            </div>
+        </div>
+
+        <div id="ex10" class="exercise-section">
+            <h3>Bài 10: Countdown Timer</h3>
+            <div class="demo-area" style="text-align:center;">
+                <p>Khuyến mãi kết thúc sau:</p>
+                <h1 id="timer-10" style="font-size: 3rem; color: var(--danger);">10:00</h1>
+                <button id="btn-10-buy">MUA NGAY</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ĐIỀU HƯỚNG MENU ---
+        function showEx(id) {
+            document.querySelectorAll('.exercise-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar li').forEach(l => l.classList.remove('active'));
+            document.getElementById('ex' + id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // --- BÀI 1: DARK MODE ---
+        document.getElementById('btn-1').onclick = () => document.getElementById('box-1').classList.toggle('dark-active');
+
+        // --- BÀI 2: SHOW PASSWORD ---
+        document.getElementById('btn-2').onclick = function() {
+            const input = document.getElementById('input-2');
+            const isPass = input.type === 'password';
+            input.type = isPass ? 'text' : 'password';
+            this.innerText = isPass ? 'Ẩn mật khẩu' : 'Hiện mật khẩu';
+        };
+
+        // --- BÀI 3: CHAR COUNTER ---
+        document.getElementById('input-3').oninput = function() {
+            const len = this.value.length;
+            const countEl = document.getElementById('count-3');
+            countEl.innerText = `${len} / 150 ký tự`;
+            countEl.style.color = len > 150 ? 'red' : '#666';
+        };
+
+        // --- BÀI 4: CART ---
+        document.getElementById('input-4').oninput = function() {
+            const total = this.value * 25000000;
+            document.getElementById('total-4').innerText = total.toLocaleString();
+        };
+
+        // --- BÀI 5: SEARCH ---
+        document.getElementById('input-5').oninput = function() {
+            const key = this.value.toLowerCase();
+            document.querySelectorAll('#list-5 li').forEach(li => {
+                li.style.display = li.innerText.toLowerCase().includes(key) ? '' : 'none';
+            });
+        };
+
+        // --- BÀI 6: MODAL & TOAST ---
+        const modal = document.getElementById('modal-6');
+        document.getElementById('btn-6-modal').onclick = () => modal.style.display = 'flex';
+        function closeModal() { modal.style.display = 'none'; }
+        function confirmDelete() { closeModal(); showToast("Đã xóa bài viết!"); }
+        
+        document.getElementById('btn-6-toast').onclick = () => showToast("Tin nhắn đã được gửi!");
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.innerText = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        // --- BÀI 7: QUIZ ---
+        document.getElementById('btn-7').onclick = () => {
+            const ans = document.querySelector('input[name="q1"]:checked');
+            alert(ans && ans.value === 'correct' ? "Chính xác! 👏" : "Sai rồi! Thử lại nhé.");
+        };
+
+        // --- BÀI 8: SLIDER ---
+        const imgs = [10, 20, 30, 40].map(id => `https://picsum.photos/id/${id}/800/300`);
+        let idx = 0;
+        document.getElementById('btn-8-next').onclick = () => { idx = (idx+1)%imgs.length; document.getElementById('slider-img').src = imgs[idx]; };
+        document.getElementById('btn-8-prev').onclick = () => { idx = (idx-1+imgs.length)%imgs.length; document.getElementById('slider-img').src = imgs[idx]; };
+
+        // --- BÀI 9: TODO ---
+        document.getElementById('btn-9-add').onclick = () => {
+            const val = document.getElementById('input-9').value;
+            if(!val) return;
+            const item = document.createElement('div');
+            item.className = 'todo-item';
+            item.innerHTML = `<span>${val}</span> <button style="padding:2px 8px; background:var(--danger)">X</button>`;
+            item.querySelector('span').onclick = () => item.classList.toggle('done');
+            item.querySelector('button').onclick = () => item.remove();
+            document.getElementById('list-9').appendChild(item);
+            document.getElementById('input-9').value = '';
+        };
+
+        // --- BÀI 10: COUNTDOWN ---
+        let time = 600;
+        const timerEl = document.getElementById('timer-10');
+        const countInt = setInterval(() => {
+            let m = Math.floor(time/60), s = time%60;
+            timerEl.innerText = `${m}:${s<10?'0':''}${s}`;
+            if(time-- <= 0) { clearInterval(countInt); timerEl.innerText = "HẾT HẠN"; document.getElementById('btn-10-buy').disabled = true; }
+        }, 1000);
+    </script>
+</body>
+</html>
